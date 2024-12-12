@@ -6,9 +6,9 @@ const AppSidebar = () => {
     const navigate = useNavigate();
 
     const menuItems = [
-        { label: 'Harajatlar', icon: 'pi pi-home', command: () => navigate('/expenses') },
-        { label: 'Kirim', icon: 'pi pi-user', command: () => navigate('/income') },
-        { label: 'Ishchilar', icon: 'pi pi-envelope', command: () => console.log('Messages clicked') },
+        { label: 'Expenses', icon: 'pi pi-home', command: () => navigate('/expenses') },
+        { label: 'Income', icon: 'pi pi-user', command: () => navigate('/income') },
+        { label: 'Workers', icon: 'pi pi-envelope', command: () => console.log('Messages clicked') },
         { separator: true },
         { label: 'Logout', icon: 'pi pi-sign-out', command: () => console.log('Logout clicked') },
     ];
