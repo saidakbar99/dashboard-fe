@@ -3,6 +3,8 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import Layout from './components/layout';
 import { ExpensesPage } from "./components/ExpensesPage";
 import { IncomePage } from "./components/IncomePage";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const client = new ApolloClient({
   uri: 'http://localhost:3000/graphql',
@@ -21,6 +23,7 @@ function App() {
             <Route path="/expenses" element={<ExpensesPage />} />
             {/* <Route path="/employees" element={<EmployeesList />} /> */}
           </Routes>
+          <ToastContainer />
         </Layout>
       </Router>
     </ApolloProvider>
