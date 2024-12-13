@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { gql, useQuery, useMutation } from '@apollo/client';
+import { format } from 'date-fns';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputTextarea } from 'primereact/inputtextarea';
@@ -322,7 +323,12 @@ export const ExpensesPage = () => {
         <Column field="category.name" header="Category" style={{ width: '15%' }}></Column>
         <Column field="worker.name" header="Worker" style={{ width: '15%' }}></Column>
         <Column field="description" header="Description" style={{ width: '20%' }}></Column>
-        <Column field="expense_date" header="Date" style={{ width: '15%' }}></Column>
+        <Column
+          field="expense_date"
+          header="Date"
+          style={{ width: '15%' }}
+          body={(rowData) => format(new Date(rowData.expense_date), 'yyyy-MM-dd')}
+        ></Column>
         <Column 
           rowEditor 
           editorButton 
