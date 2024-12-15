@@ -3,40 +3,13 @@ import { gql, useQuery, useMutation } from '@apollo/client';
 import { format } from 'date-fns';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { FloatLabel } from 'primereact/floatlabel';
 import { toast } from 'react-toastify';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
-
-const GET_CATEGORIES = gql`
-  query {
-    getExpenseCategories{
-      id
-      name
-      description
-      expense_amount
-      created_at
-    }
-  }
-`;
-
-const CREATE_CATEGORY = gql`
-  mutation createExpenseCategory(
-    $name: String!
-    $description: String!
-  ) {
-    createExpenseCategory(
-      name: $name
-      description: $description
-    ) {
-      name
-      description
-    }
-  }
-`;
+import { GET_CATEGORIES, CREATE_CATEGORY } from '../graphql';
 
 export const ExpenseCategoriesPage = () => {
   const { loading: getExpenseCategoriesLoading, data: expenseCategories, refetch } = useQuery(GET_CATEGORIES);
@@ -108,7 +81,7 @@ export const ExpenseCategoriesPage = () => {
 
   return (
     <div>
-      <h3 className='text-3xl text-semibold text-gray mb-4'>Expense Category Page</h3>
+      <h3 className='text-3xl text-semibold text-gray mb-4'>Categories Page</h3>
       <Button 
         label="Add Expense Category" 
         icon="pi pi-plus" 

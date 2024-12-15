@@ -1,6 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import Layout from './components/Layout';
+import { Layout } from './components/Layout';
 import { ExpensesPage } from "./components/ExpensesPage";
 import { IncomesPage } from "./components/IncomesPage";
 import { ToastContainer } from 'react-toastify';
@@ -25,6 +25,7 @@ function App() {
             <Route path="/expenses" element={<ExpensesPage />} />
             <Route path="/workers" element={<WorkersPage />} />
             <Route path="/expense-categories" element={<ExpenseCategoriesPage />} />
+            <Route path="*" element={<Navigate to="/expenses" replace />} />
           </Routes>
           <ToastContainer />
         </Layout>

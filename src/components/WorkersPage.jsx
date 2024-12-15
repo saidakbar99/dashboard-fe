@@ -9,36 +9,7 @@ import { Dialog } from 'primereact/dialog';
 import { FloatLabel } from 'primereact/floatlabel';
 import { toast } from 'react-toastify';
 import { InputText } from 'primereact/inputtext';
-
-const GET_WORKERS = gql`
-  query {
-    getWorkers{
-      id
-      name
-      role
-      salary
-      created_at
-    }
-  }
-`;
-
-const CREATE_WORKER = gql`
-  mutation CreateWorker(
-    $salary: Float!
-    $name: String!
-    $role: String!
-  ) {
-    createWorker(
-      salary: $salary
-      name: $name
-      role: $role
-    ) {
-      salary
-      name
-      role
-    }
-  }
-`;
+import { CREATE_WORKER, GET_WORKERS } from '../graphql';
 
 export const WorkersPage = () => {
   const { loading: getWorkersLoading, data: workers, refetch } = useQuery(GET_WORKERS);

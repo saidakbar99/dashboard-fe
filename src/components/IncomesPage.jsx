@@ -11,45 +11,7 @@ import { Dialog } from 'primereact/dialog';
 import { FloatLabel } from 'primereact/floatlabel';
 import { Calendar } from 'primereact/calendar';
 import { toast } from 'react-toastify';
-
-const GET_INCOMES = gql`
-  query {
-    getIncomes{
-      id
-      amount
-      description
-      project{
-        name
-      }
-      created_at
-      income_date
-    }
-    getProjects {
-      id
-      name
-    }
-  }
-`;
-
-const CREATE_INCOME = gql`
-  mutation CreateIncome(
-    $amount: Float!
-    $project: String!
-    $income_date: DateTime!
-    $description: String
-  ) {
-    createIncome(
-      amount: $amount
-      project: $project
-      income_date: $income_date
-      description: $description
-    ) {
-      amount
-      description
-      income_date
-    }
-  }
-`;
+import { CREATE_INCOME, GET_INCOMES } from '../graphql';
 
 export const IncomesPage = () => {
   const { loading: getIncomesLoading, data: incomes, refetch } = useQuery(GET_INCOMES);
@@ -186,7 +148,6 @@ export const IncomesPage = () => {
               <Button 
                 label="Edit Income" 
                 icon="pi pi-check" 
-                // onClick={() => updateIncome()}
                 className='h-fit item-center'
                 disabled={true}
               />

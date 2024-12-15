@@ -3,40 +3,13 @@ import { gql, useQuery, useMutation } from '@apollo/client';
 import { format } from 'date-fns';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { FloatLabel } from 'primereact/floatlabel';
 import { toast } from 'react-toastify';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
-
-const GET_PROJECTS = gql`
-  query {
-    getProjects{
-      id
-      name
-      description
-      income_amount
-      created_at
-    }
-  }
-`;
-
-const CREATE_PROJECT = gql`
-  mutation CreateProject(
-    $name: String!
-    $description: String!
-  ) {
-    createProject(
-      name: $name
-      description: $description
-    ) {
-      name
-      description
-    }
-  }
-`;
+import { CREATE_PROJECT, GET_PROJECTS } from '../graphql';
 
 export const ProjectsPage = () => {
   const { loading: getProjectsLoading, data: projects, refetch } = useQuery(GET_PROJECTS);
