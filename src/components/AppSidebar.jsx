@@ -6,15 +6,17 @@ const AppSidebar = () => {
     const navigate = useNavigate();
 
     const menuItems = [
-        { label: 'Expenses', icon: 'pi pi-home', command: () => navigate('/expenses') },
-        { label: 'Income', icon: 'pi pi-user', command: () => navigate('/income') },
-        { label: 'Workers', icon: 'pi pi-envelope', command: () => console.log('Messages clicked') },
+        { label: 'Income', icon: 'pi pi-chart-line', command: () => navigate('/incomes') },
+        { label: 'Expenses', icon: 'pi pi-receipt', command: () => navigate('/expenses') },
+        { label: 'Workers', icon: 'pi pi-users', command: () => navigate('/workers') },
+        { label: 'Projects', icon: 'pi pi-briefcase', command: () => navigate('/projects') },
+        { label: 'Expense Categories', icon: 'pi pi-receipt', command: () => navigate('/expense-categories') },
         { separator: true },
         { label: 'Logout', icon: 'pi pi-sign-out', command: () => console.log('Logout clicked') },
     ];
 
     return (
-        <div className="flex flex-col h-screen w-64 bg-gray-800 text-white">
+        <div className="flex flex-col h-svh w-64 bg-gray-800 text-white">
             <div className="text-center py-4 bg-blue-900">
                 <h2 className="text-lg font-bold">App name</h2>
             </div>

@@ -69,7 +69,6 @@ const CREATE_EXPENSE = gql`
       amount
       description
       expense_date
-      
     }
   }
 `;
@@ -115,7 +114,7 @@ export const ExpensesPage = () => {
   const [createExpenseMutation, { loading: createExpenseLoading }] = useMutation(CREATE_EXPENSE);
   const [updateExpenseMutation, { loading: updateExpenseLoading }] = useMutation(UPDATE_EXPENSE);
 
-  const shablon = {
+  const initialData = {
     amount: 0,
     project: null,
     worker: null,
@@ -124,10 +123,8 @@ export const ExpensesPage = () => {
     expense_date: new Date(),
   }
   const [isEdit, setIsEdit] = useState(false)
-  const [formState, setFormState] = useState(shablon);
+  const [formState, setFormState] = useState(initialData);
   const [showCreateModal, setShowCreateModal] = useState(false);
-
-  console.log('>>>formState',formState)
 
   const priceBodyTemplate = (rowData) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(rowData.amount);
@@ -148,7 +145,7 @@ export const ExpensesPage = () => {
       return
     }
     setShowCreateModal(false)
-    setFormState(shablon)
+    setFormState(initialData)
     setIsEdit(false)
   } 
 
@@ -181,6 +178,7 @@ export const ExpensesPage = () => {
       refetch()
       toast.success('Expense is successfully created!')
       setShowCreateModal(false)
+      setFormState(initialData)
     } catch (error) {
       toast.error('Error during expense creation!')
       console.error('Error: ', error)
@@ -212,6 +210,7 @@ export const ExpensesPage = () => {
 
   return (
     <div>
+      <h3 className='text-3xl text-semibold text-gray mb-4'>Expense Page</h3>
       <Button 
         label="Harajat qo'shish" 
         icon="pi pi-plus" 
@@ -220,7 +219,7 @@ export const ExpensesPage = () => {
       />
 
       <Dialog 
-        header="Yangi Harajat" 
+        header={isEdit ? 'Edit Expense' : 'New Expense'} 
         visible={showCreateModal}
         className='w-1/2'
         onHide={handleDialogHide}
@@ -285,16 +284,15 @@ export const ExpensesPage = () => {
               <Button 
                 label="Delete Expense" 
                 icon="pi pi-trash" 
-                // onClick={() => createExpense()}
                 className='h-fit item-center mr-4'
-                disabled={createExpenseLoading}
+                disabled={true}
               />
               <Button 
                 label="Edit Expense" 
                 icon="pi pi-check" 
                 onClick={() => updateExpense()}
                 className='h-fit item-center'
-                disabled={createExpenseLoading}
+                disabled={updateExpenseLoading}
               />
             </div>
           ) : (
@@ -316,7 +314,6 @@ export const ExpensesPage = () => {
         value={expenses.getExpenses} 
         editMode="row" 
         dataKey="id"  
-        responsiveLayout="scroll"
       >
         <Column field="amount" header="Amount" body={priceBodyTemplate} style={{ width: '10%' }}></Column>
         <Column field="project.name" header="Project" style={{ width: '15%' }}></Column>
