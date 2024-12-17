@@ -9,11 +9,12 @@ import { Dialog } from 'primereact/dialog';
 import { FloatLabel } from 'primereact/floatlabel';
 import { toast } from 'react-toastify';
 import { InputText } from 'primereact/inputtext';
-import { CREATE_WORKER, GET_WORKERS } from '../graphql';
+import { CREATE_WORKER, GET_WORKERS, DELETE_WORKER } from '../graphql';
 
 export const WorkersPage = () => {
-  const { loading: getWorkersLoading, data: workers, refetch } = useQuery(GET_WORKERS);
+  const { loading: getWorkersLoading, data: workers, refetch } = useQuery(GET_WORKERS);DELETE_WORKER
   const [createWorkerMutation, { loading: createWorkerLoading }] = useMutation(CREATE_WORKER);
+  const [deleteWorkerMutation, { loading: deleteWorkerLoading }] = useMutation(DELETE_WORKER);
   const initialData = {
     name: '',
     role: '',
@@ -22,8 +23,6 @@ export const WorkersPage = () => {
   const [isEdit, setIsEdit] = useState(false)
   const [formState, setFormState] = useState(initialData);
   const [showCreateModal, setShowCreateModal] = useState(false);
-
-  console.log('>>>formState',formState)
 
   const priceBodyTemplate = (rowData) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(rowData.salary);
@@ -59,7 +58,7 @@ export const WorkersPage = () => {
   if (getWorkersLoading) {
     return <></>
   }
-
+  
   const createWorker = async () => {
     if (!validateForm()) return;
 
@@ -77,6 +76,21 @@ export const WorkersPage = () => {
       setShowCreateModal(false)
     } catch (error) {
       toast.error('Error during worker creation!')
+      console.error('Error: ', error)
+    }
+  }
+
+  const deleteWorker = async () => {
+    try {
+      await deleteWorkerMutation({
+        variables: { id: formState.id }
+      });
+      refetch()
+      toast.success('Worker is successfully deleted!')
+      setFormState(initialData)
+      setShowCreateModal(false)
+    } catch (error) {
+      toast.error('Error during worker deletion!')
       console.error('Error: ', error)
     }
   }
@@ -126,8 +140,9 @@ export const WorkersPage = () => {
               <Button 
                 label="Delete Worker" 
                 icon="pi pi-trash" 
+                onClick={() => deleteWorker()}
                 className='h-fit item-center mr-4'
-                disabled={true}
+                disabled={deleteWorkerLoading}
               />
               <Button 
                 label="Edit Worker" 

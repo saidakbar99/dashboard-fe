@@ -9,11 +9,12 @@ import { FloatLabel } from 'primereact/floatlabel';
 import { toast } from 'react-toastify';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { GET_CATEGORIES, CREATE_CATEGORY } from '../graphql';
+import { GET_CATEGORIES, CREATE_CATEGORY, DELETE_CATEGORY } from '../graphql';
 
 export const ExpenseCategoriesPage = () => {
-  const { loading: getExpenseCategoriesLoading, data: expenseCategories, refetch } = useQuery(GET_CATEGORIES);
+  const { loading: getExpenseCategoriesLoading, data: expenseCategories, refetch } = useQuery(GET_CATEGORIES);DELETE_CATEGORY
   const [createExpenseCategoryMutation, { loading: createExpenseCategoryLoading }] = useMutation(CREATE_CATEGORY);
+  const [deleteExpenseCategoryMutation, { loading: deleteExpenseCategoryLoading }] = useMutation(DELETE_CATEGORY);
   const initialData = {
     name: '',
     description: '',
@@ -21,8 +22,6 @@ export const ExpenseCategoriesPage = () => {
   const [isEdit, setIsEdit] = useState(false)
   const [formState, setFormState] = useState(initialData);
   const [showCreateModal, setShowCreateModal] = useState(false);
-
-  console.log('>>>expenseCategories', expenseCategories)
 
   const priceBodyTemplate = (rowData) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(rowData.expense_amount);
@@ -58,7 +57,7 @@ export const ExpenseCategoriesPage = () => {
   if (getExpenseCategoriesLoading) {
     return <></>
   }
-
+  deleteExpenseCategoryMutation
   const createExpenseCategory = async () => {
     if (!validateForm()) return;
 
@@ -75,6 +74,21 @@ export const ExpenseCategoriesPage = () => {
       setShowCreateModal(false)
     } catch (error) {
       toast.error('Error during expense category creation!')
+      console.error('Error: ', error)
+    }
+  }
+
+  const deleteExpenseCategory = async () => {
+    try {
+      await deleteExpenseCategoryMutation({
+        variables: { id: formState.id },
+      });
+      refetch()
+      toast.success('Expense Category is successfully deleted!')
+      setFormState(initialData)
+      setShowCreateModal(false)
+    } catch (error) {
+      toast.error('If there is expense on this category, You cannot delete this Category!')
       console.error('Error: ', error)
     }
   }
@@ -108,13 +122,14 @@ export const ExpenseCategoriesPage = () => {
           {isEdit ? (
             <div>
               <Button 
-                label="Delete Expense Category" 
+                label="Delete Category" 
                 icon="pi pi-trash" 
+                onClick={() => deleteExpenseCategory()}
                 className='h-fit item-center mr-4'
-                disabled={true}
+                disabled={deleteExpenseCategoryLoading}
               />
               <Button 
-                label="Edit Expense Category" 
+                label="Edit Category" 
                 icon="pi pi-check" 
                 className='h-fit item-center'
                 disabled={true}
@@ -122,7 +137,7 @@ export const ExpenseCategoriesPage = () => {
             </div>
           ) : (
             <Button 
-              label="Create Expense Category" 
+              label="Create Category" 
               icon="pi pi-check" 
               onClick={() => createExpenseCategory()}
               disabled={createExpenseCategoryLoading}

@@ -11,11 +11,12 @@ import { Dialog } from 'primereact/dialog';
 import { FloatLabel } from 'primereact/floatlabel';
 import { Calendar } from 'primereact/calendar';
 import { toast } from 'react-toastify';
-import { CREATE_INCOME, GET_INCOMES } from '../graphql';
+import { CREATE_INCOME, GET_INCOMES, DELETE_INCOME } from '../graphql';
 
 export const IncomesPage = () => {
   const { loading: getIncomesLoading, data: incomes, refetch } = useQuery(GET_INCOMES);
   const [createIncomeMutation, { loading: createIncomeLoading }] = useMutation(CREATE_INCOME);
+  const [deleteIncomeMutation, { loading: deleteIncomeLoading }] = useMutation(DELETE_INCOME);
   const initialData = {
     amount: 0,
     project: null,
@@ -25,7 +26,6 @@ export const IncomesPage = () => {
   const [isEdit, setIsEdit] = useState(false)
   const [formState, setFormState] = useState(initialData);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  console.log('>>>incomes',incomes)
 
   const priceBodyTemplate = (rowData) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(rowData.amount);
@@ -61,7 +61,7 @@ export const IncomesPage = () => {
   if (getIncomesLoading) {
     return <></>
   }
-
+  
   const createIncome = async () => {
     if (!validateForm()) return;
 
@@ -80,6 +80,21 @@ export const IncomesPage = () => {
       setShowCreateModal(false)
     } catch (error) {
       toast.error('Error during income creation!')
+      console.error('Error: ', error)
+    }
+  }
+
+  const deleteIncome = async () => {
+    try {
+      await deleteIncomeMutation({
+        variables: { id: formState.id },
+      });
+      refetch()
+      toast.success('Income is successfully deleted!')
+      setFormState(initialData)
+      setShowCreateModal(false)
+    } catch (error) {
+      toast.error('Error during income deletion!')
       console.error('Error: ', error)
     }
   }
@@ -117,7 +132,7 @@ export const IncomesPage = () => {
           />
         </div>
         <Dropdown 
-          value={isEdit ? formState?.project.name : formState.project} 
+          value={isEdit ? formState?.project?.name : formState.project} 
           onChange={(e) => updateFormState('project', e.value)} 
           options={incomes.getProjects} 
           optionLabel="name"
@@ -125,25 +140,26 @@ export const IncomesPage = () => {
           placeholder="Select a Project"
           className="w-full md:w-14rem mb-3"
         />
-        <div className='flex justify-between items-center'>
-          <FloatLabel>
-            <InputTextarea 
-              autoResize 
-              id="description" 
-              value={formState.description} 
-              onChange={(e) => updateFormState('description', e.target.value)} 
-              rows={2} 
-              cols={30} 
-            />
-            <label htmlFor="description">Description</label>
-          </FloatLabel>
+        <FloatLabel>
+          <InputTextarea 
+            autoResize 
+            id="description" 
+            value={formState.description} 
+            onChange={(e) => updateFormState('description', e.target.value)} 
+            rows={2} 
+            cols={30} 
+          />
+          <label htmlFor="description">Description</label>
+        </FloatLabel>
+        <div className='flex justify-end items-center mt-4'>
           {isEdit ? (
             <div>
               <Button 
                 label="Delete Income" 
                 icon="pi pi-trash" 
+                onClick={() => deleteIncome()}
                 className='h-fit item-center mr-4'
-                disabled={true}
+                disabled={deleteIncomeLoading}
               />
               <Button 
                 label="Edit Income" 

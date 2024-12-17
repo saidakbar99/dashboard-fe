@@ -60,3 +60,9 @@ export const UPDATE_EXPENSE = gql`
     }
   }
 `;
+
+export const DELETE_EXPENSE = gql`
+  mutation DeleteExpense($id: String!) {
+    deleteExpense(id: $id)
+  }
+`;

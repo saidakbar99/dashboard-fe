@@ -19,3 +19,9 @@ export const CREATE_INCOME = gql`
     }
   }
 `;
+
+export const DELETE_INCOME = gql`
+  mutation DeleteIncome($id: String!) {
+    deleteIncome(id: $id)
+  }
+`;

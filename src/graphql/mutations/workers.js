@@ -17,3 +17,9 @@ mutation CreateWorker(
   }
 }
 `;
+
+export const DELETE_WORKER = gql`
+  mutation DeleteWorker($id: String!) {
+    deleteWorker(id: $id)
+  }
+`;

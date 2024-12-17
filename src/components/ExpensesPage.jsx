@@ -11,12 +11,13 @@ import { Dialog } from 'primereact/dialog';
 import { FloatLabel } from 'primereact/floatlabel';
 import { Calendar } from 'primereact/calendar';
 import { toast } from 'react-toastify';
-import { CREATE_EXPENSE, GET_EXPENSES, UPDATE_EXPENSE } from '../graphql';
+import { CREATE_EXPENSE, GET_EXPENSES, UPDATE_EXPENSE, DELETE_EXPENSE } from '../graphql';
 
 export const ExpensesPage = () => {
   const { loading: getExpensesLoading, data: expenses, refetch } = useQuery(GET_EXPENSES);
   const [createExpenseMutation, { loading: createExpenseLoading }] = useMutation(CREATE_EXPENSE);
   const [updateExpenseMutation, { loading: updateExpenseLoading }] = useMutation(UPDATE_EXPENSE);
+  const [deleteExpenseMutation, { loading: deleteExpenseLoading }] = useMutation(DELETE_EXPENSE);
 
   const initialData = {
     amount: 0,
@@ -112,6 +113,21 @@ export const ExpensesPage = () => {
     }
   };
 
+  const deleteExpense = async () => {
+    try {
+      await deleteExpenseMutation({
+        variables: { id: formState.id },
+      });
+      refetch()
+      toast.success('Expense is successfully deleted!')
+      setIsEdit(false)
+      setShowCreateModal(false)
+    } catch (error) {
+      toast.error('Error during expense deletion!')
+      console.error('Error deleting expense:', error);
+    }
+  };
+
   return (
     <div>
       <h3 className='text-3xl text-semibold text-gray mb-4'>Expense Page</h3>
@@ -125,7 +141,7 @@ export const ExpensesPage = () => {
       <Dialog 
         header={isEdit ? 'Edit Expense' : 'New Expense'} 
         visible={showCreateModal}
-        className='w-1/2'
+        className='w-[600px]'
         onHide={handleDialogHide}
         breakpoints={{ '960px': '75vw', '641px': '100vw' }}
       >
@@ -171,25 +187,26 @@ export const ExpensesPage = () => {
           placeholder="Select an Employee"
           className="w-full md:w-14rem mb-3"
         />
-        <div className='flex justify-between items-center'>
-          <FloatLabel>
-            <InputTextarea 
-              autoResize 
-              id="description" 
-              value={formState.description} 
-              onChange={(e) => updateFormState('description', e.target.value)} 
-              rows={2} 
-              cols={30} 
-            />
-            <label htmlFor="description">Description</label>
-          </FloatLabel>
+        <FloatLabel>
+          <InputTextarea 
+            autoResize 
+            id="description" 
+            value={formState.description} 
+            onChange={(e) => updateFormState('description', e.target.value)} 
+            rows={2} 
+            cols={30} 
+          />
+          <label htmlFor="description">Description</label>
+        </FloatLabel>
+        <div className='flex justify-end items-center mt-4'>
           {isEdit ? (
             <div>
               <Button 
                 label="Delete Expense" 
                 icon="pi pi-trash" 
+                onClick={() => deleteExpense()}
                 className='h-fit item-center mr-4'
-                disabled={true}
+                disabled={deleteExpenseLoading}
               />
               <Button 
                 label="Edit Expense" 
@@ -208,10 +225,8 @@ export const ExpensesPage = () => {
               disabled={createExpenseLoading}
             />
           )}
-          
         </div>
       </Dialog>
-
       <DataTable 
         paginator
         rows={5}

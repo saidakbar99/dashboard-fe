@@ -14,3 +14,9 @@ export const CREATE_CATEGORY = gql`
     }
   }
 `;
+
+export const DELETE_CATEGORY = gql`
+  mutation DeleteExpenseCategory($id: String!) {
+    deleteExpenseCategory(id: $id)
+  }
+`;

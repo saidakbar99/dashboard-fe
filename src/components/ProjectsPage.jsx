@@ -9,11 +9,12 @@ import { FloatLabel } from 'primereact/floatlabel';
 import { toast } from 'react-toastify';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { CREATE_PROJECT, GET_PROJECTS } from '../graphql';
+import { CREATE_PROJECT, GET_PROJECTS, DELETE_PROJECT } from '../graphql';
 
 export const ProjectsPage = () => {
-  const { loading: getProjectsLoading, data: projects, refetch } = useQuery(GET_PROJECTS);
+  const { loading: getProjectsLoading, data: projects, refetch } = useQuery(GET_PROJECTS);DELETE_PROJECT
   const [createProjectMutation, { loading: createProjectLoading }] = useMutation(CREATE_PROJECT);
+  const [deleteProjectMutation, { loading: deleteProjectLoading }] = useMutation(DELETE_PROJECT);
   const initialData = {
     name: '',
     description: '',
@@ -21,8 +22,6 @@ export const ProjectsPage = () => {
   const [isEdit, setIsEdit] = useState(false)
   const [formState, setFormState] = useState(initialData);
   const [showCreateModal, setShowCreateModal] = useState(false);
-
-  console.log('>>>formState', formState)
 
   const priceBodyTemplate = (rowData) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(rowData.income_amount);
@@ -58,7 +57,7 @@ export const ProjectsPage = () => {
   if (getProjectsLoading) {
     return <></>
   }
-
+  
   const createProject = async () => {
     if (!validateForm()) return;
 
@@ -79,6 +78,21 @@ export const ProjectsPage = () => {
     }
   }
 
+  const deleteProject = async () => {
+    try {
+      await deleteProjectMutation({
+        variables: { id: formState.id },
+      });
+      refetch()
+      toast.success('Project is successfully deleted!')
+      setFormState(initialData)
+      setShowCreateModal(false)
+    } catch (error) {
+      toast.error('Error during project deletion!')
+      console.error('Error: ', error)
+    }
+  }
+
   return (
     <div>
       <h3 className='text-3xl text-semibold text-gray mb-4'>Project Page</h3>
@@ -88,7 +102,6 @@ export const ProjectsPage = () => {
         onClick={() => setShowCreateModal(true)} 
         className='mb-4' 
       />
-
       <Dialog 
         header={isEdit ? 'Edit Project' : 'New Project'} 
         visible={showCreateModal}
@@ -110,8 +123,9 @@ export const ProjectsPage = () => {
               <Button 
                 label="Delete Project" 
                 icon="pi pi-trash" 
+                onClick={() => deleteProject()}
                 className='h-fit item-center mr-4'
-                disabled={true}
+                disabled={deleteProjectLoading}
               />
               <Button 
                 label="Edit Project" 
