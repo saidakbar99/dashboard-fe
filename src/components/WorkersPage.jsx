@@ -12,7 +12,7 @@ import { InputText } from 'primereact/inputtext';
 import { CREATE_WORKER, GET_WORKERS, DELETE_WORKER } from '../graphql';
 
 export const WorkersPage = () => {
-  const { loading: getWorkersLoading, data: workers, refetch } = useQuery(GET_WORKERS);DELETE_WORKER
+  const { loading: getWorkersLoading, data: workers, refetch } = useQuery(GET_WORKERS);
   const [createWorkerMutation, { loading: createWorkerLoading }] = useMutation(CREATE_WORKER);
   const [deleteWorkerMutation, { loading: deleteWorkerLoading }] = useMutation(DELETE_WORKER);
   const initialData = {
