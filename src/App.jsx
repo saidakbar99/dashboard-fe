@@ -16,9 +16,9 @@ const token = localStorage.getItem('access_token');
 const client = new ApolloClient({
   uri: 'http://localhost:3000/graphql',
   cache: new InMemoryCache(),
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
+  // headers: {
+  //   Authorization: `Bearer ${token}`,
+  // },
 });
 
 function App() {
@@ -33,7 +33,7 @@ function App() {
           <Route
             path="/*"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <Layout>
                   <Routes>
                     <Route path="/incomes" element={<IncomesPage />} />
@@ -43,10 +43,10 @@ function App() {
                     <Route path="/expense-categories" element={<ExpenseCategoriesPage />} />
                   </Routes>
                 </Layout>
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
-          <Route path="/login" element={<LoginPage />} />
+          {/* <Route path="/login" element={<LoginPage />} /> */}
         </Routes>
         <ToastContainer />
       </Router>
