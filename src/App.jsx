@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { ApolloClient, InMemoryCache, createHttpLink, ApolloLink, ApolloProvider } from '@apollo/client';
 import { Layout } from './components/Layout';
 import { ExpensesPage } from "./components/ExpensesPage";
 import { IncomesPage } from "./components/IncomesPage";
@@ -11,14 +11,23 @@ import { LoginPage } from "./components/LoginPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import 'react-toastify/dist/ReactToastify.css';
 
-const token = localStorage.getItem('access_token');
+const httpLink = createHttpLink({
+  uri: 'http://localhost:3000/graphql',
+});
+
+const authLink = new ApolloLink((operation, forward) => {
+  const token = localStorage.getItem('access_token');
+  operation.setContext({
+    headers: {
+      authorization: token ? `Bearer ${token}` : '',
+    },
+  });
+  return forward(operation);
+});
 
 const client = new ApolloClient({
-  uri: 'http://localhost:3000/graphql',
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
-  // headers: {
-  //   Authorization: `Bearer ${token}`,
-  // },
 });
 
 function App() {
@@ -26,14 +35,10 @@ function App() {
     <ApolloProvider client={client}>
       <Router>
         <Routes>
-          {/* <Route 
-            path="*" 
-            element={<Navigate to="/expenses" replace />} 
-          /> */}
           <Route
             path="/*"
             element={
-              // <ProtectedRoute>
+              <ProtectedRoute>
                 <Layout>
                   <Routes>
                     <Route path="/incomes" element={<IncomesPage />} />
@@ -41,12 +46,13 @@ function App() {
                     <Route path="/expenses" element={<ExpensesPage />} />
                     <Route path="/workers" element={<WorkersPage />} />
                     <Route path="/expense-categories" element={<ExpenseCategoriesPage />} />
+                    <Route path="*" element={<Navigate to="/expenses" replace />} />
                   </Routes>
                 </Layout>
-              // </ProtectedRoute>
+              </ProtectedRoute>
             }
           />
-          {/* <Route path="/login" element={<LoginPage />} /> */}
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
         <ToastContainer />
       </Router>

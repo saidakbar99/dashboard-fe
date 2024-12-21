@@ -4,6 +4,11 @@ import { useNavigate } from 'react-router-dom';
 const AppSidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
 
+  const handleLogout = () => {
+    localStorage.removeItem('access_token')
+    navigate('/login')
+  }
+
   const menuItems = [
     { label: 'Income', icon: 'pi pi-chart-line', command: () => {navigate('/incomes'); onClose()} },
     { label: 'Expenses', icon: 'pi pi-receipt', command: () => {navigate('/expenses'); onClose()} },
@@ -11,7 +16,7 @@ const AppSidebar = ({ isOpen, onClose }) => {
     { label: 'Projects', icon: 'pi pi-briefcase', command: () => {navigate('/projects'); onClose()} },
     { label: 'Expense Categories', icon: 'pi pi-receipt', command: () => {navigate('/expense-categories'); onClose()} },
     { separator: true },
-    { label: 'Logout', icon: 'pi pi-sign-out', command: () => console.log('Logout clicked') },
+    { label: 'Logout', icon: 'pi pi-sign-out', command: () => handleLogout() },
   ];
 
   return (
